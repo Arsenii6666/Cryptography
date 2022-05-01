@@ -16,7 +16,7 @@ class Server:
     def start(self):
         self.s.bind((self.host, self.port))
         self.s.listen(100)
-
+        #
         p, q=rsa.Generate_prime_numbers()
         n=p*q
         self.n=n
@@ -27,27 +27,18 @@ class Server:
         d = pow(e, -1, fi)
         self.public_key = (e, n)
         self.private_key = (d, n)
-
+        #
         while True:
             c, addr = self.s.accept()
             username = c.recv(1024).decode()
             print(f"{username} tries to connect")
             self.broadcast(f'new person has joined: {username}')
-            self.username_lookup[c] = username
+            self.username_lookup[c] = (username, c.recv(1024))
             self.clients.append(c)
 
             # send public key to the client 
-
+            c.send(self.public_key)
             # ...
-
-            # encrypt the secret with the clients public key
-
-            # ...
-
-            # send the encrypted secret to a client 
-
-            # ...
-
             threading.Thread(target=self.handle_client,args=(c,addr,)).start()
 
     def broadcast(self, msg: str):
@@ -55,7 +46,7 @@ class Server:
 
             # encrypt the message
             message=rsa.separate_message(rsa.alpha_encode_the_message(message), self.n)
-            message=rsa.encoding(message, self.public_key)
+            message=rsa.encoding(message, self.username_lookup[client][1])
             # ...
 
             client.send(msg.encode())
@@ -63,9 +54,12 @@ class Server:
     def handle_client(self, c: socket, addr): 
         while True:
             msg = c.recv(1024)
-
+            #decrypt msg
+            #
             for client in self.clients:
                 if client != c:
+                    #incrypt msg
+                    #
                     client.send(msg)
 
 if __name__ == "__main__":
