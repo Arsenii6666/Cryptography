@@ -21,7 +21,7 @@ def encoding(block, key):
     while key argument is an (int, int) tuple generated 
     by the main function.
     """
-    return str((int(block) ^ key[0]) % key[1])
+    return str((int(block) ** key[0]) % key[1])
 
 def alpha_encode_the_message(message):
     """
