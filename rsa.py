@@ -1,4 +1,5 @@
 import re
+import random
 
 def Generate_prime_numbers():
     return 83, 79
@@ -13,6 +14,21 @@ def check_codivisors(fi, x):
             output.append(i)
             break
     return output
+
+def get_the_keys():
+    p, q=Generate_prime_numbers()
+    n=p*q
+    n=n
+    fi = (p - 1)*(q - 1)
+    e = [x for x in range(2, fi) if \
+            not check_codivisors(fi, x)]
+    e = e[random.randint(0, len(e) - 1)]
+    for x in range(1, fi):
+        if (((e % fi) * (x % fi)) % fi == 1):
+            d = x
+    public_key = (e, n)
+    private_key = (d, n)
+    return public_key, private_key
 
 def encoding(block, key):
     """
@@ -76,3 +92,5 @@ def separate_message(message, n):
                 to_append = "0" + to_append
             blocks.append(to_append)
         return blocks
+
+print(get_the_keys())
