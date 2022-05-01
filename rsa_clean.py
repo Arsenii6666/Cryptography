@@ -112,7 +112,7 @@ open("discrete-math-project3/en_alphabet.txt",\
         """
         self.message = []
         for i in self.blocks:
-            self.message.append(str(self.encoding(i, self.public_key)))
+            self.message.append(str(self.encoding(i, self.private_key)))
         self.alpha_decode_the_message()
 
 
