@@ -1,6 +1,9 @@
 import socket
 import threading
 import message_integrity
+import rsa
+import random
+
 class Server:
 
     def __init__(self, port: int) -> None:
@@ -14,7 +17,16 @@ class Server:
         self.s.bind((self.host, self.port))
         self.s.listen(100)
 
-        # generate keys ...
+        p, q=rsa.Generate_prime_numbers()
+        n=p*q
+        self.n=n
+        fi = (p - 1)*(q - 1)
+        e = [x for x in range(2, fi) if \
+             not rsa.check_codivisors(fi, x)]
+        e = e[random.randint(0, len(e) - 1)]
+        d = pow(e, -1, fi)
+        self.public_key = (e, n)
+        self.private_key = (d, n)
 
         while True:
             c, addr = self.s.accept()
@@ -42,7 +54,8 @@ class Server:
         for client in self.clients: 
 
             # encrypt the message
-
+            message=rsa.separate_message(rsa.alpha_encode_the_message(message), self.n)
+            message=rsa.encoding(message, self.public_key)
             # ...
 
             client.send(msg.encode())
