@@ -42,6 +42,8 @@ class Server:
             threading.Thread(target=self.handle_client,args=(c,addr,)).start()
 
     def broadcast(self, msg: str):
+        print(msg)
+        return
         for client in self.clients: 
 
             # encrypt the message
@@ -55,10 +57,12 @@ class Server:
         while True:
             msg = c.recv(1024)
             #decrypt msg
+            msg=rsa.alpha_decode_the_message(rsa.encoding(msg, self.private_key), self.n)
             #
             for client in self.clients:
-                if client != c:
+                if client != c: #Доробити умову
                     #incrypt msg
+                    msg=rsa.encoding(rsa.alpha_encode_the_message(msg, self.n), self.username_lookup[c][1])
                     #
                     client.send(msg)
 
